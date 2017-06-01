@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/MoodleNetCore.User.Service/obj
+/MoodleNetCore.User.Api/obj
