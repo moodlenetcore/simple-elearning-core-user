@@ -18,7 +18,6 @@ namespace MoodleNetCore.User.Api.Controllers
         }
 
         [HttpGet]
-        [Route("alls")]
         public IEnumerable<Service.User> GetAllUsers()
         {
             return userManager.GetAllUsers();

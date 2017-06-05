@@ -38,7 +38,9 @@ namespace MoodleNetCore.User.Api
 
             services.AddTransient<IMoodleContext, MoodleContext>();
             services.AddTransient<IUserManager, UserManager>();
+            services.AddTransient<ILoginManager, LoginManager>();
             services.AddTransient<IUserStore<Service.User>, MyUserStore>();
+            services.AddTransient<IRoleStore<Service.Role>, MyRoleStore>();
             services.AddIdentity<Service.User, Role>();
             serviceProvider = services.BuildServiceProvider();
         }

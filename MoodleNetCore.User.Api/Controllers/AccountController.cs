@@ -7,21 +7,22 @@ using MoodleNetCore.User.Service;
 namespace MoodleNetCore.User.Api.Controllers
 {
     [Produces("application/json")]
-    public class LoginController : Controller
+    [Route("api/[controller]")]
+    public class AccountController : Controller
     {
         private readonly IUserManager userManager;
         private readonly ILoginManager loginManager;
         private readonly ILogger logger;
 
-        public LoginController(IUserManager userManager, ILoginManager loginManager, ILoggerFactory loggerFactory)
+        public AccountController(IUserManager userManager, ILoginManager loginManager, ILoggerFactory loggerFactory)
         {
             this.userManager = userManager;
             this.loginManager = loginManager;
-            this.logger = loggerFactory.CreateLogger<LoginController>();
+            this.logger = loggerFactory.CreateLogger<AccountController>();
         }
 
         [HttpPost]
-        [Route("api/[controller]/register")]
+        [Route("[action]")]
         public IActionResult Register([FromBody]RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -41,7 +42,7 @@ namespace MoodleNetCore.User.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/[controller]/register")]
+        [Route("[action]")]
         public IActionResult Login([FromBody]LoginModel model)
         {
             if (ModelState.IsValid)
@@ -62,7 +63,7 @@ namespace MoodleNetCore.User.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/[controller]/logout")]
+        [Route("[action]")]
         public IActionResult Logout()
         {
             loginManager.Logout();
