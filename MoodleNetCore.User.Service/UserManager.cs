@@ -14,6 +14,8 @@ namespace MoodleNetCore.User.Service
 
         User GetUserByID(Guid id);
 
+        User GetUserByEmail(string email);
+
         IdentityResult Create(User user, string password);
 
         IdentityResult Update(User user);
@@ -45,6 +47,11 @@ namespace MoodleNetCore.User.Service
         public User GetUserByID(Guid id)
         {
             return FindByIdAsync(id.ToString()).Result;
+        }
+
+        public User GetUserByEmail(string email)
+        {
+            return FindByEmailAsync(email).Result;
         }
 
         public IdentityResult Create(User user, string password)

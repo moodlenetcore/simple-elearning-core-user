@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using MoodleNetCore.User.Api.Helpers;
 using MoodleNetCore.User.Api.Models;
 using MoodleNetCore.User.Service;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace MoodleNetCore.User.Api.Controllers
 {
@@ -51,7 +57,18 @@ namespace MoodleNetCore.User.Api.Controllers
                 if (result.Succeeded)
                 {
                     logger.LogInformation(1, "User logged in.");
-                    return Ok();
+
+                    Service.User user = userManager.GetUserByEmail(model.Email);
+                    DateTime requestAt = DateTime.Now;
+                    DateTime expiresIn = requestAt + TokenAuthOption.ExpiresSpan;
+                    string token = GenerateToken(user, expiresIn);
+
+                    return Ok(new {
+                        RequestAt = requestAt,
+                        ExpiresIn = TokenAuthOption.ExpiresSpan.TotalSeconds,
+                        TokeyType = TokenAuthOption.TokenType,
+                        AccessToken = token
+                    });
                 }
                 else
                 {
@@ -77,6 +94,24 @@ namespace MoodleNetCore.User.Api.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+        private string GenerateToken(Service.User user, DateTime expires)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+
+            ClaimsIdentity identity = new ClaimsIdentity(new GenericIdentity(user.UserName, "TokenAuth"), new[] { new Claim("Id", user.Id.ToString()) });
+
+            SecurityToken securityToken = handler.CreateToken(new SecurityTokenDescriptor
+            {
+                Issuer = TokenAuthOption.Issuer,
+                Audience = TokenAuthOption.Audience,
+                SigningCredentials = TokenAuthOption.SigningCredentials,
+                Subject = identity,
+                Expires = expires
+            });
+
+            return handler.WriteToken(securityToken);
         }
     }
 }
