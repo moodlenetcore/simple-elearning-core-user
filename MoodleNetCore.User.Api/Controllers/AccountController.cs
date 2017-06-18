@@ -39,7 +39,18 @@ namespace MoodleNetCore.User.Api.Controllers
                 {
                     loginManager.Login(user, isPersistent: false);
                     logger.LogInformation(3, "User created a new account with password.");
-                    return Ok();
+
+                    DateTime requestAt = DateTime.Now;
+                    DateTime expiresIn = requestAt + TokenAuthOption.ExpiresSpan;
+                    string token = GenerateToken(user, expiresIn);
+
+                    return Ok(new
+                    {
+                        RequestAt = requestAt,
+                        ExpiresIn = TokenAuthOption.ExpiresSpan.TotalSeconds,
+                        TokeyType = TokenAuthOption.TokenType,
+                        AccessToken = token
+                    });
                 }
                 AddErrors(result);
             }
